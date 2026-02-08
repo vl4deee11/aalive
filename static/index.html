@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>AALive </title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+
+<body>
+  <div id="controls">
+    <button id="pause">Pause</button>
+    <button id="toggleFood">Toggle Random Food</button>
+    <button id="addFoodBtn">Add Food (click canvas)</button>
+    <button id="plantAgentBtn">Plant Agent (click canvas)</button>
+    <div id="agentForm" style="display:none;">
+      <label>Energy: <input id="ag_energy" type="number" value="50" /></label>
+      <label>Sex: <select id="ag_sex">
+          <option>M</option>
+          <option>F</option>
+        </select></label>
+      <label>Agg: <input id="ag_agg" type="number" step="0.01" value="0.5" /></label>
+      <label>Spd: <input id="ag_spd" type="number" value="1" /></label>
+      <label>Str: <input id="ag_str" type="number" step="0.1" value="6" /></label>
+      <label>Repro: <input id="ag_repro" type="number" step="0.01" value="0.05" /></label>
+    </div>
+  </div>
+  <div id="layout">
+    <canvas id="field"></canvas>
+    <div id="side">
+      <div id="stats"></div>
+      <div id="legend">
+        <h4>Legend</h4>
+        <div class="legendRow"><span class="legendIcon food">🍎</span> Food</div>
+        <div class="legendRow"><span class="legendIcon male">♂</span> Male</div>
+        <div class="legendRow"><span class="legendIcon female">♀</span> Female</div>
+      </div>
+      <h3>Agents</h3>
+      <div id="agentList">
+        <table id="agentTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Energy</th>
+              <th>Age</th>
+              <th>Sex</th>
+              <th>Strength</th>
+              <th>Aggression</th>
+              <th>Repro</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <h3>Genealogy</h3>
+      <div id="genealogy"></div>
+      <h3>Events Log <span id="eventCount" style="font-size:12px; color:#aaa;">(0)</span></h3>
+      <div id="eventLog"
+        style="height:150px; overflow-y:auto; border:1px solid #333; background:#0a0f13; padding:8px; font-size:11px;">
+      </div>
+    </div>
+  </div>
+  <script src="/app.js"></script>
+</body>
+
+</html>
+</body>
+
+</html>

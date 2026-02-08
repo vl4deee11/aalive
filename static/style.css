@@ -1,0 +1,183 @@
+body {
+    background: linear-gradient(180deg, #07101a, #071216);
+    color: #e6eef6;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    margin: 18px;
+}
+
+h1 {
+    margin: 0 0 10px 0
+}
+
+#layout {
+    display: flex;
+    gap: 12px
+}
+
+#field {
+    display: block;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    margin-top: 10px;
+    background: linear-gradient(#08141a, #051018);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+}
+
+#side {
+    width: 320px
+}
+
+#legend {
+    margin-top: 8px;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 10px;
+}
+
+.legendRow {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 4px 0
+}
+
+.legendIcon {
+    width: 20px;
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center
+}
+
+.legendIcon.food {
+    color: #2ecc71
+}
+
+.legendIcon.male {
+    color: #4285f4
+}
+
+.legendIcon.female {
+    color: #db4437
+}
+
+#stats {
+    margin-top: 8px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 10px;
+}
+
+#agentList {
+    margin-top: 8px;
+    max-height: 420px;
+    overflow: auto;
+    background: rgba(255, 255, 255, 0.02);
+    padding: 6px;
+    border-radius: 8px;
+}
+
+#agentTable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+#agentTable th,
+#agentTable td {
+    padding: 6px 8px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03)
+}
+
+#agentTable th {
+    font-weight: 600;
+    font-size: 12px;
+    color: #cfe6ff
+}
+
+#agentTable tbody tr:hover {
+    background: rgba(255, 255, 255, 0.02);
+    cursor: pointer
+}
+
+#controls {
+    margin-bottom: 6px
+}
+
+button {
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: #0b66d0;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+#agentForm {
+    margin-top: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+}
+
+#agentForm label {
+    background: rgba(255, 255, 255, 0.02);
+    padding: 6px 8px;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #cfe6ff;
+}
+
+#agentForm input,
+#agentForm select {
+    margin-left: 6px;
+    padding: 4px 6px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.02);
+    color: #e6eef6;
+    width: 70px;
+}
+
+#toggleFood,
+#addFoodBtn,
+#plantAgentBtn {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    color: #e6eef6;
+}
+
+.agentItem {
+    padding: 6px 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.agentItem:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.agentItem span {
+    display: inline-block
+}
+
+.geneTree {
+    font-size: 13px;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 8px;
+    margin-top: 6px
+}
+
+.geneTree ul {
+    margin: 6px 0 6px 14px
+}
+
+.geneTree li {
+    margin: 4px 0
+}
