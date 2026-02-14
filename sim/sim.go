@@ -456,10 +456,6 @@ func (s *Sim) chooseAction(a *Agent) ([]float64, []float64, int) {
 	return features, probs, act
 }
 
-func (s *Sim) updatePolicy(a *Agent, reward float64) {
-	return
-}
-
 func dot(a, b []float64) float64 {
 	n := len(a)
 	if len(b) < n {
@@ -470,13 +466,6 @@ func dot(a, b []float64) float64 {
 		s += a[i] * b[i]
 	}
 	return s
-}
-
-func boolToFloat(b bool) float64 {
-	if b {
-		return 1.0
-	}
-	return 0.0
 }
 
 func (s *Sim) computeFeaturesAndProbs(a *Agent) ([]float64, []float64) {
