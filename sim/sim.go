@@ -52,12 +52,6 @@ type Food struct {
 	Energy float64 `json:"energy"`
 }
 
-type Cloud struct {
-	X, Y int
-	R    int     // radius in cells
-	Prob float64 // probability to spawn a food per tick
-}
-
 type Event struct {
 	Type     string `json:"type"`
 	Tick     int    `json:"tick"`
@@ -86,7 +80,6 @@ type Sim struct {
 	RandomFoodProb  float64
 	ticksElapsed    int
 	events          []Event
-	Clouds          []Cloud
 }
 
 func NewSim(w, h int) *Sim {
@@ -100,16 +93,10 @@ func NewSim(w, h int) *Sim {
 		RandomFood:     true,
 		RandomFoodProb: 0.04,
 		events:         make([]Event, 0),
-		Clouds:         make([]Cloud, 0),
 	}
 	for i := 0; i < 2; i++ {
 		s.addRandomAgent()
 	}
-	// add a default cloud in the center
-	cx := w / 2
-	cy := h / 2
-	cr := int(math.Max(4, math.Min(float64(w), float64(h))/6.0))
-	s.Clouds = append(s.Clouds, Cloud{X: cx, Y: cy, R: cr, Prob: 0.05})
 	return s
 }
 
@@ -190,23 +177,6 @@ func (s *Sim) Tick() {
 			key := x*s.H + y
 			if !s.foodAt(x, y) && !s.agentAt(x, y) {
 				s.foods[key] = &Food{X: x, Y: y, Energy: 12 + s.rand.Float64()*12}
-			}
-		}
-	}
-
-	// spawn food from clouds
-	for _, cl := range s.Clouds {
-		if s.rand.Float64() < cl.Prob {
-			// choose random point in circle
-			theta := s.rand.Float64() * 2 * math.Pi
-			r := s.rand.Float64() * float64(cl.R)
-			x := cl.X + int(math.Round(math.Cos(theta)*r))
-			y := cl.Y + int(math.Round(math.Sin(theta)*r))
-			x = clamp(x, 0, s.W-1)
-			y = clamp(y, 0, s.H-1)
-			if !s.foodAt(x, y) && !s.agentAt(x, y) {
-				key := x*s.H + y
-				s.foods[key] = &Food{X: x, Y: y, Energy: 8 + s.rand.Float64()*16}
 			}
 		}
 	}
@@ -297,11 +267,6 @@ func (s *Sim) Tick() {
 	for _, f := range s.foods {
 		foodsOut = append(foodsOut, map[string]interface{}{"x": f.X, "y": f.Y, "energy": f.Energy})
 	}
-
-	cloudsOut := make([]map[string]interface{}, 0, len(s.Clouds))
-	for _, c := range s.Clouds {
-		cloudsOut = append(cloudsOut, map[string]interface{}{"x": c.X, "y": c.Y, "r": c.R, "prob": c.Prob})
-	}
 	sumAgg := 0.0
 	for _, a := range agentsList {
 		sumAgg += a.Aggression
@@ -334,7 +299,7 @@ func (s *Sim) Tick() {
 		})
 	}
 
-	snapshot := map[string]interface{}{"type": "state", "agents": agentsOut, "foods": foodsOut, "metrics": metrics, "lineage": s.lineage, "events": eventsOut, "clouds": cloudsOut}
+	snapshot := map[string]interface{}{"type": "state", "agents": agentsOut, "foods": foodsOut, "metrics": metrics, "lineage": s.lineage, "events": eventsOut}
 
 	select {
 	case s.StateChan <- snapshot:
@@ -778,7 +743,7 @@ func (s *Sim) tryMerge(a *Agent) bool {
 		if other.ID == a.ID {
 			continue
 		}
-		if other.Sex == a.Sex {
+		if other.Sex != a.Sex {
 			continue
 		}
 		if abs(other.X-a.X)+abs(other.Y-a.Y) <= 1 {
