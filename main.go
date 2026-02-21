@@ -26,30 +26,52 @@ func (c *Client) Send(v interface{}) error {
 	return c.conn.WriteJSON(v)
 }
 
+type ClientManager struct {
+	clients map[*Client]struct{}
+	mu      sync.RWMutex
+}
+
+func NewClientManager() *ClientManager {
+	return &ClientManager{
+		clients: make(map[*Client]struct{}),
+	}
+}
+
+func (cm *ClientManager) AddClient(c *Client) {
+	cm.mu.Lock()
+	defer cm.mu.Unlock()
+	cm.clients[c] = struct{}{}
+}
+
+func (cm *ClientManager) RemoveClient(c *Client) {
+	cm.mu.Lock()
+	defer cm.mu.Unlock()
+	delete(cm.clients, c)
+}
+
+func (cm *ClientManager) GetClients() []*Client {
+	cm.mu.RLock()
+	defer cm.mu.RUnlock()
+	list := make([]*Client, 0, len(cm.clients))
+	for c := range cm.clients {
+		list = append(list, c)
+	}
+	return list
+}
+
 func main() {
 	width, height := 100, 100
 	s := sim.NewSim(width, height)
 	go s.Run()
 
-	clients := make(map[*Client]struct{})
-	clientsMu := sync.Mutex{}
+	clientManager := NewClientManager()
 
 	go func() {
 		for state := range s.StateChan {
-
-			clientsMu.Lock()
-			list := make([]*Client, 0, len(clients))
-			for c := range clients {
-				list = append(list, c)
-			}
-			clientsMu.Unlock()
-
-			for _, c := range list {
+			for _, c := range clientManager.GetClients() {
 				if err := c.Send(state); err != nil {
 					log.Printf("client send error: %v", err)
-					clientsMu.Lock()
-					delete(clients, c)
-					clientsMu.Unlock()
+					clientManager.RemoveClient(c)
 					c.conn.Close()
 				}
 			}
@@ -63,15 +85,19 @@ func main() {
 			return
 		}
 		client := &Client{conn: conn}
-		clientsMu.Lock()
-		clients[client] = struct{}{}
-		clientsMu.Unlock()
+		clientManager.AddClient(client)
 
-		_ = client.Send(map[string]interface{}{"type": "config", "w": width, "h": height})
+		if err := client.Send(map[string]interface{}{"type": "config", "w": width, "h": height}); err != nil {
+			log.Printf("send config error: %v", err)
+			clientManager.RemoveClient(client)
+			conn.Close()
+			return
+		}
 
 		for {
 			var msg map[string]interface{}
 			if err := conn.ReadJSON(&msg); err != nil {
+				log.Printf("read json error: %v", err)
 				break
 			}
 			typeStr, _ := msg["type"].(string)
@@ -126,12 +152,13 @@ func main() {
 				}
 			default:
 			}
-			_ = client.Send(map[string]string{"ok": "received"})
+			if err := client.Send(map[string]string{"ok": "received"}); err != nil {
+				log.Printf("send ok error: %v", err)
+				break
+			}
 		}
 
-		clientsMu.Lock()
-		delete(clients, client)
-		clientsMu.Unlock()
+		clientManager.RemoveClient(client)
 		conn.Close()
 	})
 
