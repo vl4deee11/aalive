@@ -9,8 +9,7 @@ import (
 	"sync"
 
 	"github.com/gorilla/websocket"
-
-	"github.com/vl4deee11/aalive/sim"
+	sim "github.com/vl4deee11/aalive/sim"
 )
 
 var upgrader = websocket.Upgrader{CheckOrigin: func(r *http.Request) bool { return true }}
